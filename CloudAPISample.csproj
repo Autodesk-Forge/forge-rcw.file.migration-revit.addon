@@ -24,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\CloudAPISample.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -96,12 +97,15 @@
     <Compile Include="Application.cs" />
     <Compile Include="Coroutine\Coroutine.cs" />
     <Compile Include="Coroutine\CoroutineScheduler.cs" />
+    <Compile Include="Forge\DataManagement.cs" />
+    <Compile Include="Forge\User.cs" />
     <Compile Include="Samples\Migration\IMigrationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleContext.cs" />
     <Compile Include="SampleEngine.cs" />
     <Compile Include="Samples\Migration\MigrationToBim360.cs" />
     <Compile Include="Samples\Migration\UIMigrationViewModel.cs" />
+    <Compile Include="Forge\ThreeLeggedToken.cs" />
     <Compile Include="View\ViewInputMigrationInfo.xaml.cs">
       <DependentUpon>ViewInputMigrationInfo.xaml</DependentUpon>
     </Compile>
@@ -134,6 +138,12 @@
     <Content Include="Resources\icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Autodesk.Forge">
+      <Version>1.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.7.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell">
       <Version>1.1.0</Version>
     </PackageReference>
@@ -144,6 +154,7 @@
       <Version>4.7.2</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)VSProps\SDKSamples.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -156,6 +167,7 @@
     <PostBuildEvent>
 xcopy /Y /F "$(ProjectDir)CloudAPISample.addin" "$(AppData)\Autodesk\REVIT\Addins\2022"
 
+xcopy /Y /F "$(ProjectDir)\bin\Debug\CloudAPISample.dll" "$(AppData)\Autodesk\REVIT\Addins\2022"
 
 </PostBuildEvent>
   </PropertyGroup>

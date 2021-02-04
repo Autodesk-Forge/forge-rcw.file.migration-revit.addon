@@ -172,7 +172,8 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Migration
 
             try
             {
-               var folderUrn = GetTargetFolderUrn(modelRules, directory, model)?.Urn;
+               //var folderUrn = GetTargetFolderUrn(modelRules, directory, model)?.Urn;
+               var folderUrn = modelRules.FirstOrDefault().Target.Urn;
                doc.SaveAsCloudModel(accountId, projectId, folderUrn, $"Migrated_{Path.GetFileName(model)}");
                var modelPath = doc.GetCloudModelPath();
                mapModelsNameToGuid.Add(name, $"{modelPath.GetProjectGUID()},{modelPath.GetModelGUID()}");
