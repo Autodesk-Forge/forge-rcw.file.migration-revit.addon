@@ -61,6 +61,18 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
             pbUploading.Value = progress;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="progress"></param>
+        public void DownloadingProgress( string status, int progress)
+        {
+            lbDownloadStatus.Content = status;
+            pbDownloading.Value = progress;
+        }
+
         /// <summary>
         ///    Update progress for reloading process
         /// </summary>
@@ -157,7 +169,7 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                 folderLocation.Urn = sFolderId;
 
                 var rule = new MigrationRule();
-                rule.Pattern = @"Pattern";
+                rule.Pattern = @"*.*";
                 rule.Target = folderLocation;
 
                 var model = sampleContext.Model;
@@ -173,16 +185,62 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                     CoroutineScheduler.StartCoroutine(sampleContext.Upload(localDir, accountId, projectId,
                        sampleContext.Model.Rules));
             }
-
-
         }
 
         private void OnBtnRefresh_Click(object sender, RoutedEventArgs e)
         {
+            TreeViewItem outputFolder = this.treeDataManagementOutput.SelectedItem as TreeViewItem;
+            if (null == outputFolder)
+            {
+                MessageBox.Show("Please select target output folder under BIM 360 Docs.");
+                return;
+            }
+
+            string[] parameters = outputFolder.Tag.ToString().Split('/');
+            string resourceType = parameters[parameters.Length - 2];
+            if (resourceType != "folders")
+            {
+                MessageBox.Show("Please select target output folder under BIM 360 Docs.");
+                return;
+            }
+
+            string sProjectId = parameters[parameters.Length - 3].Replace("b.", "");
+            string sFolderId = parameters[parameters.Length - 1];
+            string localDir = tbLocalFolder.Text;
+
+            //// get the account Id
+            //string sAccountId = string.Empty;
+            //var item = outputFolder.Parent as TreeViewItem;
+            //while (item != null)
+            //{
+            //    parameters = item.Tag.ToString().Split('/');
+            //    resourceType = parameters[parameters.Length - 2];
+            //    if (resourceType == "hubs")
+            //    {
+            //        sAccountId = parameters[parameters.Length - 1].Replace("b.", "");
+            //        break;
+            //    }
+            //    else
+            //    {
+            //        item = item.Parent as TreeViewItem;
+            //    }
+            //}
+
+
+
             if (DataContext is MigrationToBim360 sampleContext)
             {
-                var localDir = tbLocalFolder.Text;
-                var sProjectId = sampleContext.Model.ProjectGuid;
+                var folderLocation = new FolderLocation();
+                folderLocation.Name = @"Folder";
+                folderLocation.Urn = sFolderId;
+
+                var rule = new MigrationRule();
+                rule.Pattern = @"*.*";
+                rule.Target = folderLocation;
+
+                var model = sampleContext.Model;
+                model.Rules.Clear();
+                model.Rules.Add(rule);
 
                 if (Guid.TryParse(sProjectId, out var projectId))
                     CoroutineScheduler.StartCoroutine(sampleContext.ReloadLinks(localDir, projectId));
@@ -388,21 +446,21 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
         /// <returns></returns>
         private async Task downloadFilesFromFolder( string projectId, string folderId, string outputFolder )
         {
-            IList<DataManagement.Item> contents = await DataManagement.GetFolderContentsAsync(projectId, folderId);
-            foreach( var item in contents)
-            {
-                string[] parameters = item.ID.Split('/');
-                string resourceId = parameters[parameters.Length - 1];
-                if ( item.Type == "folders")
-                {
-                    await downloadFilesFromFolder(projectId, resourceId, Path.Combine(outputFolder, item.Text));
-                }
-                if( item.Type == "items")
-                {
-                    DataManagement.DownloadFile( projectId, resourceId, outputFolder );
-                }
-            }
-            return;
+           IList<DataManagement.Item> contents = await DataManagement.GetFolderContentsAsync(projectId, folderId);
+           foreach( var item in contents)
+           {
+               string[] parameters = item.ID.Split('/');
+               string resourceId = parameters[parameters.Length - 1];
+               if ( item.Type == "folders")
+               {
+                   await downloadFilesFromFolder(projectId, resourceId, Path.Combine(outputFolder, item.Text));
+               }
+               if( item.Type == "items")
+               {
+                   DataManagement.DownloadFile( projectId, resourceId, outputFolder );
+               }
+           }
+           return;
         }
     }
 }

@@ -37,17 +37,24 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Coroutine
 
       private Coroutine coroutines;
 
+      private System.Windows.Threading.DispatcherTimer dispatcherTimer;
+
       private CoroutineScheduler()
       {
       }
 
       private void Attach()
       {
-         CompositionTarget.Rendering += Update;
+         dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+         dispatcherTimer.Tick += new EventHandler(Update);
+         dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+         dispatcherTimer.Start();
       }
 
       private void Detach()
       {
+         dispatcherTimer?.Stop();
+         dispatcherTimer = null;
       }
 
       private void AddCoroutine(Coroutine coroutine)

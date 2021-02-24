@@ -26,10 +26,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System.Windows;
 using Autodesk.Revit.DB;
 using Revit.SDK.Samples.CloudAPISample.CS.View;
+using System.Threading.Tasks;
+using Revit.SDK.Samples.CloudAPISample.CS.Forge;
 
 namespace Revit.SDK.Samples.CloudAPISample.CS.Migration
 {
@@ -92,185 +94,174 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Migration
          return Model.AvailableFolders.Last();
       }
 
-      /// <summary>
-      ///    User coroutine to update UI during processing.
-      /// </summary>
-      public IEnumerator Upload(string directory, Guid accountId, Guid projectId,
-         ObservableCollection<MigrationRule> modelRules)
-      {
-         var view = (ViewMigrationToBim360) View;
-         if (!Directory.Exists(directory))
-         {
-            view.UpdateUploadingProgress("Directory doesn't exist.", 0);
-            yield break;
-         }
-
-         view.UpdateUploadingProgress("Ready to start.", 2);
-
-         var models = Directory.GetFiles(directory, "*.rvt", SearchOption.AllDirectories);
-         var count = 0;
-
-         var ops = new OpenOptions
-         {
-            OpenForeignOption = OpenForeignOption.DoNotOpen,
-            DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets
-         };
-
-         // Open all documents and analyze if document has links. 
-         // If so, save the relationship info into "mapLocalModelPathToLinksName"
-         var mapLocalModelPathToLinksName = new Dictionary<string, List<string>>();
-         foreach (var model in models)
-         {
-            var name = Path.GetFileName(model);
-            var progress = count++ * 100 / models.Length;
-            var modelpath = ModelPathUtils.ConvertUserVisiblePathToModelPath(model);
-            var doc = Application.Application.OpenDocumentFile(modelpath, ops);
-
-            view.UpdateUploadingProgress($"Analyzing {name}", progress);
-            yield return null;
-
-            try
+        /// <summary>
+        ///    User coroutine to update UI during processing.
+        /// </summary>
+        public IEnumerator Upload(string directory, Guid accountId, Guid projectId,
+           ObservableCollection<MigrationRule> modelRules)
+        {
+            var view = (ViewMigrationToBim360)View;
+            if (!Directory.Exists(directory))
             {
-               var links = new List<string>();
-               foreach (var linkInstance in GetLinkInstances(doc)) links.Add(linkInstance.Name);
-
-               if (links.Count > 0) mapLocalModelPathToLinksName[model] = links;
-            }
-            catch (Exception e)
-            {
-               var msg = $"Failed to analyze {name} - {e.Message}";
-               view.UpdateUploadingProgress(msg, progress);
-               MessageBox.Show(msg);
-               yield break;
-            }
-            finally
-            {
-               doc.Close(false);
+                view.UpdateUploadingProgress("Directory doesn't exist.", 0);
+                yield break;
             }
 
-            yield return null;
-         }
+            view.UpdateUploadingProgress("Ready to start.", 2);
 
-         // All link info should be dump to local file in case something wrong happens during uploading process
-         var jsonString = JsonSerializer.Serialize(mapLocalModelPathToLinksName);
-         File.WriteAllText(FLinksInfo, jsonString);
+            var models = Directory.GetFiles(directory, "*.rvt", SearchOption.AllDirectories);
+            var count = 0;
 
-         view.UpdateUploadingProgress("Analyzing finished", 100);
-
-         // Begin Uploading
-         count = 0;
-         var mapModelsNameToGuid = new Dictionary<string, string>();
-         foreach (var model in models)
-         {
-            var name = Path.GetFileName(model);
-            var progress = count++ * 100 / models.Length;
-            var modelpath = ModelPathUtils.ConvertUserVisiblePathToModelPath(model);
-            var doc = Application.Application.OpenDocumentFile(modelpath, ops);
-
-            view.UpdateUploadingProgress($"Uploading {name}", progress);
-            yield return null;
-
-            try
+            var ops = new OpenOptions
             {
-               //var folderUrn = GetTargetFolderUrn(modelRules, directory, model)?.Urn;
-               var folderUrn = modelRules.FirstOrDefault().Target.Urn;
-               doc.SaveAsCloudModel(accountId, projectId, folderUrn, $"Migrated_{Path.GetFileName(model)}");
-               var modelPath = doc.GetCloudModelPath();
-               mapModelsNameToGuid.Add(name, $"{modelPath.GetProjectGUID()},{modelPath.GetModelGUID()}");
-            }
-            catch (Exception e)
+                OpenForeignOption = OpenForeignOption.DoNotOpen,
+                DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets
+            };
+
+            // Open all documents and analyze if document has links. 
+            // If so, save the relationship info into "mapLocalModelPathToLinksName"
+            var mapLocalModelPathToLinksName = new Dictionary<string, List<string>>();
+            foreach (var model in models)
             {
-               var msg = $"Failed to upload {name} - {e.Message}";
-               view.UpdateUploadingProgress(msg, progress);
-               MessageBox.Show(msg);
-               yield break;
+                var name = Path.GetFileName(model);
+                var progress = count++ * 100 / models.Length;
+                var modelpath = ModelPathUtils.ConvertUserVisiblePathToModelPath(model);
+                view.UpdateUploadingProgress($"Analyzing {name}", progress);
+                yield return null;
+
+                try
+                {
+                    var doc = Application.Application.OpenDocumentFile(modelpath, ops);
+                    var links = new List<string>();
+                    foreach (var linkInstance in GetLinkInstances(doc)) links.Add(linkInstance.Name);
+
+                    if (links.Count > 0) mapLocalModelPathToLinksName[model] = links;
+                    doc.Close(false);
+                }
+                catch (Exception e)
+                {
+                    var msg = $"Failed to analyze {name} - {e.Message}";
+                    view.UpdateUploadingProgress(msg, progress);
+                    MessageBox.Show(msg);
+                    yield break;
+                }
+
+                yield return null;
             }
-            finally
+
+            // All link info should be dump to local file in case something wrong happens during uploading process
+            var jsonString = JsonConvert.SerializeObject(mapLocalModelPathToLinksName);
+            File.WriteAllText(FLinksInfo, jsonString);
+
+            view.UpdateUploadingProgress("Analyzing finished", 100);
+
+            // Begin Uploading
+            count = 0;
+            var mapModelsNameToGuid = new Dictionary<string, string>();
+            foreach (var model in models)
             {
-               doc.Close(false);
+                var name = Path.GetFileName(model);
+                var progress = count++ * 100 / models.Length;
+                var modelpath = ModelPathUtils.ConvertUserVisiblePathToModelPath(model);
+                view.UpdateUploadingProgress($"Uploading {name}", progress);
+                yield return null;
+
+                try
+                {
+                    var doc = Application.Application.OpenDocumentFile(modelpath, ops);
+                    //var folderUrn = GetTargetFolderUrn(modelRules, directory, model)?.Urn;
+                    var folderUrn = modelRules.FirstOrDefault().Target.Urn;
+                    doc.SaveAsCloudModel(accountId, projectId, folderUrn, $"Migrated_{Path.GetFileName(model)}");
+                    var modelPath = doc.GetCloudModelPath();
+                    mapModelsNameToGuid.Add(name, $"{modelPath.GetProjectGUID()},{modelPath.GetModelGUID()}");
+                    doc.Close(false);
+                }
+                catch (Exception e)
+                {
+                    var msg = $"Failed to upload {name} - {e.Message}";
+                    view.UpdateUploadingProgress(msg, progress);
+                    MessageBox.Show(msg);
+                    yield break;
+                }
+
+                yield return null;
             }
 
-            yield return null;
-         }
+            jsonString = JsonConvert.SerializeObject(mapModelsNameToGuid);
+            File.WriteAllText(FModelsGuid, jsonString);
 
-         jsonString = JsonSerializer.Serialize(mapModelsNameToGuid);
-         File.WriteAllText(FModelsGuid, jsonString);
+            view.UpdateUploadingProgress("Uploading finished", 100);
+        }
 
-         view.UpdateUploadingProgress("Uploading finished", 100);
-      }
-
-      /// <summary>
-      ///    Try to open each cloud model and reload if they have links,
-      ///    making that point to cloud path.
-      /// </summary>
-      /// <param name="directory">Transit directory where cloud models exist</param>
-      /// <param name="projectId">not used</param>
-      /// <returns></returns>
-      public IEnumerator ReloadLinks(string directory, Guid projectId)
-      {
-         var view = (ViewMigrationToBim360) View;
-         if (!Directory.Exists(directory))
-         {
-            view.UpdateReloadingProgress("Directory doesn't exist.", 0);
-            yield break;
-         }
-
-         view.UpdateReloadingProgress("Ready to start.", 2);
-
-         var ops = new OpenOptions();
-         var transOp = new TransactWithCentralOptions();
-         var swcOptions = new SynchronizeWithCentralOptions();
-         var count = 0;
-
-         // Read mapping info
-         var jsonString = File.ReadAllText(FLinksInfo);
-         var mapLocalModelPathToLinksName = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonString);
-         jsonString = File.ReadAllText(FModelsGuid);
-         var mapModelsNameToGuid = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
-
-         // Try to open each cloud model and reload if they have links, making that point to cloud path.
-         foreach (var kvp in mapLocalModelPathToLinksName)
-         {
-            var localPath = kvp.Key;
-            var name = Path.GetFileName(localPath);
-            var guids = mapModelsNameToGuid[name].Split(',');
-            var hostModelPath =
-               ModelPathUtils.ConvertCloudGUIDsToCloudPath("US", Guid.Parse(guids[0]), Guid.Parse(guids[1]));
-
-            var progress = count++ * 100 / mapLocalModelPathToLinksName.Count();
-            view.UpdateReloadingProgress($"Reloading {name}", progress);
-            yield return null;
-
-            var doc = Application.Application.OpenDocumentFile(hostModelPath, ops,
-               new DefaultOpenFromCloudCallback());
-            try
+        /// <summary>
+        ///    Try to open each cloud model and reload if they have links,
+        ///    making that point to cloud path.
+        /// </summary>
+        /// <param name="directory">Transit directory where cloud models exist</param>
+        /// <param name="projectId">not used</param>
+        /// <returns></returns>
+        public IEnumerator ReloadLinks(string directory, Guid projectId)
+        {
+            var view = (ViewMigrationToBim360)View;
+            if (!Directory.Exists(directory))
             {
-               foreach (var linkInstance in GetLinkInstances(doc))
-                  if (mapModelsNameToGuid.TryGetValue(linkInstance.Name, out var sLinkedGuids))
-                  {
-                     guids = mapModelsNameToGuid[linkInstance.Name].Split(',');
-                     var linkModelPath =
-                        ModelPathUtils.ConvertCloudGUIDsToCloudPath("US", Guid.Parse(guids[0]),
-                           Guid.Parse(guids[1]));
-                     linkInstance.LoadFrom(linkModelPath, new WorksetConfiguration());
-                  }
+                view.UpdateReloadingProgress("Directory doesn't exist.", 0);
+                yield break;
+            }
 
-               doc.SynchronizeWithCentral(transOp, swcOptions);
-            }
-            catch (Exception e)
-            {
-               var msg = $"Failed to reload {name} - {e.Message}";
-               view.UpdateUploadingProgress(msg, progress);
-               MessageBox.Show(msg);
-               yield break;
-            }
-            finally
-            {
-               doc.Close(false);
-            }
-         }
+            view.UpdateReloadingProgress("Ready to start.", 2);
 
-         view.UpdateReloadingProgress("Reloading finished", 100);
-      }
-   }
+            var ops = new OpenOptions();
+            var transOp = new TransactWithCentralOptions();
+            var swcOptions = new SynchronizeWithCentralOptions();
+            var count = 0;
+
+            // Read mapping info
+            var jsonString = File.ReadAllText(FLinksInfo);
+            var mapLocalModelPathToLinksName = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(jsonString);
+            jsonString = File.ReadAllText(FModelsGuid);
+            var mapModelsNameToGuid = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
+
+            // Try to open each cloud model and reload if they have links, making that point to cloud path.
+            foreach (var kvp in mapLocalModelPathToLinksName)
+            {
+                var localPath = kvp.Key;
+                var name = Path.GetFileName(localPath);
+                var guids = mapModelsNameToGuid[name].Split(',');
+                var hostModelPath =
+                   ModelPathUtils.ConvertCloudGUIDsToCloudPath("US", Guid.Parse(guids[0]), Guid.Parse(guids[1]));
+
+                var progress = count++ * 100 / mapLocalModelPathToLinksName.Count();
+                view.UpdateReloadingProgress($"Reloading {name}", progress);
+                yield return null;
+
+                try
+                {
+                    var doc = Application.Application.OpenDocumentFile(hostModelPath, ops,
+                       new DefaultOpenFromCloudCallback());
+                    foreach (var linkInstance in GetLinkInstances(doc))
+                        if (mapModelsNameToGuid.TryGetValue(linkInstance.Name, out var sLinkedGuids))
+                        {
+                            guids = mapModelsNameToGuid[linkInstance.Name].Split(',');
+                            var linkModelPath =
+                               ModelPathUtils.ConvertCloudGUIDsToCloudPath("US", Guid.Parse(guids[0]),
+                                  Guid.Parse(guids[1]));
+                            linkInstance.LoadFrom(linkModelPath, new WorksetConfiguration());
+                        }
+
+                    doc.SynchronizeWithCentral(transOp, swcOptions);
+                    doc.Close(false);
+                }
+                catch (Exception e)
+                {
+                    var msg = $"Failed to reload {name} - {e.Message}";
+                    view.UpdateUploadingProgress(msg, progress);
+                    MessageBox.Show(msg);
+                    yield break;
+                }
+            }
+
+            view.UpdateReloadingProgress("Reloading finished", 100);
+        }
+    }
 }
