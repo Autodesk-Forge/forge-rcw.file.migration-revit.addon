@@ -54,7 +54,11 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Forge
                 {
                     return;
                 }
-
+                if( _httpListener != null)
+                {
+                    _httpListener.Stop();
+                    _httpListener.Close();
+                }
                 // Initialize our web listerner
                 _httpListener = new HttpListener();
                 _httpListener.Prefixes.Add(FORGE_CALLBACK.Replace("localhost", "+") + "/");

@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections;
-using System.Windows.Media;
 
 namespace Revit.SDK.Samples.CloudAPISample.CS.Coroutine
 {

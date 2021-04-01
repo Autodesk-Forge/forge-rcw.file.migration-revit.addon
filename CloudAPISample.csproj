@@ -24,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\CloudAPISample.XML</DocumentationFile>
-    <CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -106,9 +105,6 @@
     <Compile Include="Samples\Migration\MigrationToBim360.cs" />
     <Compile Include="Samples\Migration\UIMigrationViewModel.cs" />
     <Compile Include="Forge\ThreeLeggedToken.cs" />
-    <Compile Include="View\ViewInputMigrationInfo.xaml.cs">
-      <DependentUpon>ViewInputMigrationInfo.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\ViewSamplePortal.xaml.cs">
       <DependentUpon>ViewSamplePortal.xaml</DependentUpon>
     </Compile>
@@ -117,10 +113,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="View\ViewInputMigrationInfo.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\ViewSamplePortal.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -147,17 +139,13 @@
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell">
       <Version>1.1.0</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
     <PackageReference Include="System.Runtime.Serialization.Json">
       <Version>4.3.0</Version>
     </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.5.2</Version>
+    <PackageReference Include="System.Text.Json">
+      <Version>4.7.2</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(SolutionDir)VSProps\SDKSamples.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

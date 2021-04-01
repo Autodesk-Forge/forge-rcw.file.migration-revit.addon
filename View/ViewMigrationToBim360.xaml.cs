@@ -63,17 +63,6 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
 
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="status"></param>
-        /// <param name="progress"></param>
-        public void DownloadingProgress( string status, int progress)
-        {
-            lbDownloadStatus.Content = status;
-            pbDownloading.Value = progress;
-        }
-
-        /// <summary>
         ///    Update progress for reloading process
         /// </summary>
         /// <param name="status">Text prompt to indicate the process</param>
@@ -94,33 +83,6 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
             }
         }
 
-        private void OnBtnReveal_Click(object sender, RoutedEventArgs e)
-        {
-            if (!Directory.Exists(tbLocalFolder.Text))
-                MessageBox.Show("Invalid folder path");
-            else
-                Process.Start(tbLocalFolder.Text);
-        }
-
-        private void OnBtnConfig_Click(object sender, RoutedEventArgs e)
-        {
-            var ctx = (MigrationToBim360)DataContext;
-            var viewConfiguration = new ViewInputMigrationInfo(ctx);
-            viewConfiguration.Show();
-        }
-
-        private void OnBtnRemoveRule_Click(object sender, RoutedEventArgs e)
-        {
-            var model = ((MigrationToBim360)DataContext).Model;
-            if (lvRules.SelectedIndex >= 0 && lvRules.SelectedIndex < model.Rules.Count)
-                model.Rules.RemoveAt(lvRules.SelectedIndex);
-        }
-
-        private void OnBtnAddRule_Click(object sender, RoutedEventArgs e)
-        {
-            var model = ((MigrationToBim360)DataContext).Model;
-            model.Rules.Add(new MigrationRule());
-        }
 
         private void OnBtnUpload_Click(object sender, RoutedEventArgs e)
         {
@@ -177,10 +139,6 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                 model.Rules.Add(rule);
 
                 // Upload local models to target project
-                //var localDir = tbLocalFolder.Text;
-                //var sAccountId = sampleContext.Model.AccountGuid;
-                //var sProjectId = sampleContext.Model.ProjectGuid;
-
                 if (Guid.TryParse(sAccountId, out var accountId) && Guid.TryParse(sProjectId, out var projectId))
                     CoroutineScheduler.StartCoroutine(sampleContext.Upload(localDir, accountId, projectId,
                        sampleContext.Model.Rules));
@@ -207,26 +165,6 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
             string sProjectId = parameters[parameters.Length - 3].Replace("b.", "");
             string sFolderId = parameters[parameters.Length - 1];
             string localDir = tbLocalFolder.Text;
-
-            //// get the account Id
-            //string sAccountId = string.Empty;
-            //var item = outputFolder.Parent as TreeViewItem;
-            //while (item != null)
-            //{
-            //    parameters = item.Tag.ToString().Split('/');
-            //    resourceType = parameters[parameters.Length - 2];
-            //    if (resourceType == "hubs")
-            //    {
-            //        sAccountId = parameters[parameters.Length - 1].Replace("b.", "");
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        item = item.Parent as TreeViewItem;
-            //    }
-            //}
-
-
 
             if (DataContext is MigrationToBim360 sampleContext)
             {
@@ -265,7 +203,6 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                 btnSignIn.Visibility = Visibility.Visible;
                 btnSignout.Visibility = Visibility.Hidden;
             }
-
         }
 
 
@@ -281,6 +218,7 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
 
         private void OnBtnLogout_Click(object sender, RoutedEventArgs e)
         {
+            //TBD:
 
         }
 
