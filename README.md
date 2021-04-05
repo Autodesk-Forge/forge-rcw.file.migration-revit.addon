@@ -1,22 +1,15 @@
 # Revit-Cloud.WorkSharing-Sample
  
-
-
-
-
-
-
-# forge-bim360.project.setup.tool
-
 ![Platforms](https://img.shields.io/badge/platform-Windows-lightgray.svg)
-![.NET](https://img.shields.io/badge/.NET-4.6-blue.svg)
+![.NET](https://img.shields.io/badge/.NET-4.8-blue.svg)
+![Revit](https://img.shields.io/badge/Revit-2022-blue.svg)
 
+![Visual-Studio](https://img.shields.io/badge/Visual%20Studio-2019-green.svg)
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
 
 
 ![Advanced](https://img.shields.io/badge/Level-Advanced-red.svg)
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](http://opensource.org/licenses/MIT)
-
 
 
 # Description
@@ -47,9 +40,6 @@ The sample addon includes the features as follow:
 
 - Download the repository, open `RevitCloudSample.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project.
 
-
-
-
 # Packages 3rd party libraries used
 - The app use [NuGet](https://api.nuget.org/v3/index.json) to manage all the packages
 - The [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) packages is included by default
@@ -60,7 +50,9 @@ The sample addon includes the features as follow:
 
 # Further Reading
 **Documentation:**
+- [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
 - [BIM 360 API](https://developer.autodesk.com/en/docs/bim360/v1/overview/) and [App Provisioning](https://forge.autodesk.com/blog/bim-360-docs-provisioning-forge-apps)
+- [Revit SDK](https://www.revitapidocs.com/)
 
 
 # Tips & Tricks
@@ -71,18 +63,16 @@ netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\us
 Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-http-and-https?redirectedfrom=MSDN) for details.
 
 # Limitation & Known issue
-- CSV files need to be prepared with the correct format and required parameters, check [User Guide](BIM360-ProjectSetupTool-UsageGuide.pdf) for details.
-- **Copy Folder** only support **Plan** and **Project File** folder and their subfolders.
-- Copy folder support copy role permissions with this tool.
+- Currently,  the tool support downing Revit models from BIM 360 Team, you can specify a folder, and all the files under the folder will be downloaded. But there is no sign to notify when all the files are downloaded, please check the local folder to make sure all the files are fully downloaded before uploading to BIM 360 Docs.   
 
+- After logging with user account, the app will iterate all the projects and folders from BIM 360 Team and Docs, you will see the projects|folders show up gradually, be a little patient if you don't see the folder that you are interested in.
 
-# Change History
-All the changes will be tracked, please see the [Change History](CHANGELOG.md) file for full details.
+- The 3 legged token will be expired in 30 minutes, the refresh token is not kept and made to refresh the access token automatically, you need to login again if the token is expired, feel free to improve this feature.
 
 # License
-This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
+- This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
 
 
 # Written by
-- Oliver Scharpf, Global Consulting Delivery team, Autodesk.
-- Reviewed and maintained by Zhong Wu [@johnonsoftware](https://twitter.com/johnonsoftware), [Forge Partner Development](http://forge.autodesk.com)
+- Zhong Wu [@johnonsoftware](https://twitter.com/johnonsoftware), [Forge Partner Development](http://forge.autodesk.com)
+- Based on the original sample `CloudAPISample` under Revit SDK by Will Gu, Software Developer, Autodesk.
