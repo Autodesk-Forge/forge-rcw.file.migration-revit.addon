@@ -40,6 +40,12 @@ The sample addon includes the features as follow:
 
 - Download the repository, open `RevitCloudSample.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project.
 
+- Before running the plugin, since we need to communicate with 3 legged token callback over HTTP and HTTPS, please run the app with `Admin level`, or at a minimum, you need to configure a URL registration and add a Firewall exception for the URL your service will be using. You can configure these settings with the Netsh.exe tool as follow. Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-http-and-https?redirectedfrom=MSDN) for details.
+
+```powershell
+netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\user
+```
+
 # Packages 3rd party libraries used
 - The app use [NuGet](https://api.nuget.org/v3/index.json) to manage all the packages
 - The [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) packages is included by default
