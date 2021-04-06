@@ -1,4 +1,4 @@
-# Revit-Cloud.WorkSharing-Sample
+# forge-rcw.file.migration-revit.addon
  
 ![Platforms](https://img.shields.io/badge/platform-Windows-lightgray.svg)
 ![.NET](https://img.shields.io/badge/.NET-4.8-blue.svg)
@@ -13,12 +13,12 @@
 
 
 # Description
-The Revit RCW Addon Sample is based on the the project from SDK sample(Samples\CloudAPISample\CS), it intends for demonstrating usage of Revit Cloud API. In this sample, we provided the workflow to demostrate migrating an A360 Team model to BIM 360 Docs.
+The Revit addon Sample is based on the the project from SDK sample(Samples\CloudAPISample\CS), it intends for demonstrating usage of Revit Cloud API. In this sample, we provided the workflow to demostrate migrating Revit RCW model from `BIM 360 Team` to `BIM 360 Docs`.
 
 The sample addon includes the features as follow:
 1. Access all the contents within BIM 360 Team and Docs by logging with Autodesk Account.
-2. Download the Revit models to specified local folder from BIM 360 Teams by navigating folders from BIM 360 projects.
-3. Selected the targeted folder bt navigating from BIM 360 Docs, and upload the Revit models from local folder to the specified targeted folder on BIM 360 Docs.
+2. Download the Revit models to specified local folder from BIM 360 Team.
+3. Selected the targeted folder by navigating from BIM 360 Docs, and upload the Revit models from local folder to the targeted folder on BIM 360 Docs.
 4. Reload the links to the correct model in the cloud.
 
 # Thumbnail
@@ -29,9 +29,9 @@ The sample addon includes the features as follow:
 
 
 # Prerequisites
-- Visual Studio: Either Community (Windows).
-- Revit API knowledge.
+- Visual Studio (Windows).
 - .NET Framework basic knowledge with C#
+- Revit API knowledge.
 
 # Running locally
 - For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). 
