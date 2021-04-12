@@ -25,10 +25,10 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Forge
 
         private static readonly Scope[] _scope = new Scope[] { Scope.DataRead, Scope.DataWrite };
 
-
-        private static string FORGE_CLIENT_ID = "z8fGD7sOz27dGsiG1g3df2nelkXchTAV"; /*Environment.GetEnvironmentVariable("FORGE_CLIENT_ID") ?? "your_client_id"*/
-        private static string FORGE_CLIENT_SECRET = "B7f971bb0dfb54c7";/* Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET") ?? "your_client_secret";*/
-        private static string FORGE_CALLBACK = "http://localhost:3000/api/forge/callback/oauth";/*Environment.GetEnvironmentVariable("FORGE_CALLBACK") ?? "http://localhost:" + PORT + "/oauth";*/
+        // please set your Forge App client key in the environment variable first
+        private static string FORGE_CLIENT_ID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID", EnvironmentVariableTarget.User) ?? "your_client_id";
+        private static string FORGE_CLIENT_SECRET = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET", EnvironmentVariableTarget.User) ?? "your_client_secret";
+        private static string FORGE_CALLBACK = Environment.GetEnvironmentVariable("FORGE_CALLBACK", EnvironmentVariableTarget.User) ?? "your_callback";
 
 
         internal delegate void NewBearerDelegate( );

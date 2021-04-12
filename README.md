@@ -34,11 +34,24 @@ The sample addon includes the features as follow:
 - Revit API knowledge.
 
 # Running locally
-- For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). 
+- For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use http://localhost:3000/api/forge/callback/oauth as Callback URL. Finally take note of the Client ID and Client Secret. 
 
 - Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 
 - Download the repository, open `RevitCloudSample.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project.
+
+- Setup the environment variables of your Forge App key following the steps
+    1. From the desktop, right-click the very bottom-left corner of the screen to get the Power User Task Menu.
+    2. Click System from the Power User Task Menu that’s displayed on the screen.
+    3. Under the System menu, you need to click the Advanced System Settings.
+    4. In the System Properties window, click the Advanced tab, then click the Environment Variables button near the bottom of that tab.
+    5. Add the following environment variables:
+```
+    FORGE_CLIENT_ID = your_client_key
+    FORGE_CLIENT_SECRET = your_client_secret
+    FORGE_CALLBACK = http://localhost:3000/api/forge/callback/oauth
+```
+![variables](variables.png) 
 
 - Before running the plugin, since we need to communicate with 3 legged token callback over HTTP and HTTPS, please run the app with `Admin level`, or at a minimum, you need to configure a URL registration and add a Firewall exception for the URL your service will be using. You can configure these settings with the Netsh.exe tool as follow. Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-http-and-https?redirectedfrom=MSDN) for details.
 
