@@ -40,7 +40,7 @@ The sample addon includes the features as follow:
 
 - Download the repository, open `RevitCloudSample.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project.
 
-- Setup the environment variables of your Forge App key following the steps
+- Setup the environment variables of your Forge App key following the steps, please DO keep the key under your user environment, not expose to others, we are still evaluating the best practice to keep the Forge App Keys.
     1. From the desktop, right-click the very bottom-left corner of the screen to get the Power User Task Menu.
     2. Click System from the Power User Task Menu that’s displayed on the screen.
     3. Under the System menu, you need to click the Advanced System Settings.
@@ -87,6 +87,8 @@ Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotne
 - After logging with user account, the app will iterate all the projects and folders from BIM 360 Team and Docs, you will see the projects|folders show up gradually, be a little patient if you don't see the folder that you are interested in.
 
 - The 3 legged token will be expired in 30 minutes, the refresh token is not kept and made to refresh the access token automatically, you need to login again if the token is expired, feel free to improve this feature.
+
+- Please DO keep the Forge App key under your user environment variable, not expose to others. We are still evaluating the best practice to keep the Forge App Keys, may change the way if any better solution.
 
 # License
 - This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
