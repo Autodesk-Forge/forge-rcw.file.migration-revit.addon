@@ -160,6 +160,8 @@ xcopy /Y /F "$(ProjectDir)CloudAPISample.addin" "$(AppData)\Autodesk\REVIT\Addin
 
 xcopy /Y /F "$(ProjectDir)\bin\Debug\CloudAPISample.dll" "$(AppData)\Autodesk\REVIT\Addins\2022"
 
+xcopy /Y /F "$(ProjectDir)Resources\icon.ico" "$(AppData)\Autodesk\REVIT\Addins\2022"
+
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
