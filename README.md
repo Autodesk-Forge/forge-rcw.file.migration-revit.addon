@@ -33,6 +33,14 @@ The sample addon includes the features as follow:
 - .NET Framework basic knowledge with C#
 - Revit API knowledge.
 
+
+# Security considerations
+This version does not implement any security measures to protect your Forge keys, it uses the user environment variables to save your Forge keys, this may not be safe enough when delivering the application to your customer(s).
+
+If you are interrested to learn few technics to help on protecting your application and your Forge keys, please refer to
+the 'secure-dev' branch at https://github.com/Autodesk-Forge/forge.wpf.csharp when you consider to deliver your application to a customer. The sample here is present and 'unsecure' to keep the code simple and ease of read to learn the Revit and Forge API.
+
+
 # Running locally
 - For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use http://localhost:3000/api/forge/callback/oauth as Callback URL. Finally take note of the Client ID and Client Secret. 
 
@@ -75,6 +83,8 @@ netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\us
 
 
 # Tips & Tricks
+- If you run the application, and meet the exception of assembly `Autodesk.Forge` can not be loaded, you can solve this by copying the assembly(together with dependencies) to the roaming folder of your Revit plugin.
+
 - Before running the plugin, since we need to communicate with 3 legged token callback over HTTP and HTTPS. At a minimum, you want to configure a URL registration and add a Firewall exception for the URL your service will be using. You can configure these settings with the Netsh.exe tool as follow. 
 ```powershell
 netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\user
