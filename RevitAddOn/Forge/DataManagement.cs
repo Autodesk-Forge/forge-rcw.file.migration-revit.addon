@@ -177,39 +177,51 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Forge
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="projectId"></param>
         /// <param name="itemId"></param>
         /// <param name="outputFolder"></param>
-        public static async void DownloadFile(string projectId, string itemId, string outputFolder)
+        public static async Task DownloadFile(string projectId, string itemId, string outputFolder)
         {
-
             string userAccessToken = ThreeLeggedToken.GetToken();
             ItemsApi itemsApi = new ItemsApi();
             itemsApi.Configuration.AccessToken = userAccessToken;
             var item = await itemsApi.GetItemAsync(projectId, itemId);
             string displayNmae = string.Empty;
-            try { 
-                displayNmae = item.data.attributes.displayName; 
+            try
+            {
+                displayNmae = item.data.attributes.displayName;
+                string ext = Path.GetExtension(displayNmae);
+                string result = displayNmae.Replace(ext, "");
+                string zipped = item.included[0].attributes.extension.type;
+                // change the extension to .zip if the file is actually a composite design revit model
+                string downloadExt = zipped == "versions:autodesk.a360:CompositeDesign" ? ".zip" : ext;
+                displayNmae = result + downloadExt;
+
             }
-            catch { 
-                displayNmae = "no_name"; 
+            catch (Exception )
+            {
+                displayNmae = "no_name";
+            }
+            if (File.Exists(Path.Combine(outputFolder, displayNmae)))
+            {
+                return;
             }
 
             // get the storage of the item
             string storageUrl = string.Empty;
             foreach (KeyValuePair<string, dynamic> version in new DynamicDictionaryItems(item.included))
             {
-                try 
+                try
                 {
-                    storageUrl = (string)version.Value.relationships.storage.meta.link.href; 
+                    storageUrl = (string)version.Value.relationships.storage.meta.link.href;
                 }
-                catch
-                { 
+                catch (Exception )
+                {
                     storageUrl = string.Empty;
                     return;
-                } 
+                }
             }
 
             string[] parameters = storageUrl.Split('/');
@@ -218,29 +230,45 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Forge
             string objectName = objectNameFull.Split('?')[0];
 
             var objectApi = new ObjectsApi();
-            objectApi.Configuration.AccessToken = userAccessToken;
-            Stream receiveStream = null;
-            try
-            {
-                receiveStream = objectApi.GetObject(bucketKey, objectName);
-            }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return;
-            }
-            Directory.CreateDirectory(outputFolder);
-            FileStream fs = new FileStream( Path.Combine( outputFolder, displayNmae) , FileMode.Create, FileAccess.Write);
-            Byte[] bytes = new Byte[100];
-            int count = receiveStream.Read(bytes, 0, 100);
-            while (count != 0)
-            {
-                fs.Write(bytes, 0, count);
-                count = receiveStream.Read(bytes, 0, 100);
-            }
-            fs.Close();
-            receiveStream.Close();
+            var objectDetails = objectApi.GetObjectDetails(bucketKey, objectName);
+            long size = objectDetails.size;
 
+            objectApi.Configuration.AccessToken = userAccessToken;
+            long rangeLower = 0;
+            long rangeStep = 314572800;
+            long rangeUpper = rangeStep;
+            while (size >= 0)
+            {
+                try
+                {
+                    Stream receiveStream = null;
+                    string range = $"bytes={rangeLower}-{rangeUpper}";
+                    receiveStream = objectApi.GetObject(bucketKey, objectName, range);
+                    size = size - rangeStep;
+                    rangeLower = rangeLower == 0 ? rangeLower + rangeStep + 1 : rangeLower + rangeStep;
+                    rangeUpper = rangeUpper + rangeStep;
+                    Directory.CreateDirectory(outputFolder);
+                    FileMode fileMode = File.Exists(Path.Combine(outputFolder, displayNmae)) ? FileMode.Append : FileMode.Create;
+                    FileStream fs = new FileStream(Path.Combine(outputFolder, displayNmae), fileMode, FileAccess.Write);
+                    Byte[] bytes = new Byte[100];
+                    int count = receiveStream.Read(bytes, 0, 100);
+                    while (count != 0)
+                    {
+                        fs.Write(bytes, 0, count);
+                        count = receiveStream.Read(bytes, 0, 100);
+                    }
+                    fs.Close();
+                    receiveStream.Close();
+                }
+                catch (Exception )
+                {
+                    string ext = Path.GetExtension(displayNmae);
+                    displayNmae = displayNmae.Replace(ext, ".txt");
+                    FileStream failed_fs = new FileStream(Path.Combine(outputFolder, displayNmae), FileMode.Create, FileAccess.Write);
+                    failed_fs.Close();
+                    return;
+                }
+            }
             return;
         }
     }

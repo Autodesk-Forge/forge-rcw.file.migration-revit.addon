@@ -232,7 +232,7 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
             string[] parameters = curSel.Tag.ToString().Split('/');
             string resourceType = parameters[parameters.Length - 2];
             string resourceId = parameters[parameters.Length - 1];
-
+            btnDownloadFolder.IsEnabled = false;
             if (resourceType == "folders")
             {
                 string projectId = parameters[parameters.Length - 3];
@@ -243,6 +243,8 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                 MessageBox.Show("Please select a folder of BIM 360 Team");
                 return;
             }
+            btnDownloadFolder.IsEnabled = true;
+
             return;
         }
 
@@ -395,7 +397,7 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.View
                }
                if( item.Type == "items")
                {
-                   DataManagement.DownloadFile( projectId, resourceId, outputFolder );
+                   await DataManagement.DownloadFile( projectId, resourceId, outputFolder );
                }
            }
            return;

@@ -63,20 +63,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autodesk.UI.Windows">
-      <HintPath>C:\Program Files\Autodesk\Revit Preview Release\Autodesk.UI.Windows.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\Revit 2022\Autodesk.UI.Windows.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RevitAddInUtility">
-      <HintPath>C:\Program Files\Autodesk\Revit Preview Release\RevitAddInUtility.dll</HintPath>
-    </Reference>
     <Reference Include="RevitAPI">
-      <HintPath>C:\Program Files\Autodesk\Revit Preview Release\RevitAPI.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\Revit 2022\RevitAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>C:\Program Files\Autodesk\Revit Preview Release\RevitAPIUI.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\Revit 2022\RevitAPIUI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -158,7 +155,7 @@
     <PostBuildEvent>
 xcopy /Y /F "$(ProjectDir)CloudAPISample.addin" "$(AppData)\Autodesk\REVIT\Addins\2022"
 
-xcopy /Y /F "$(ProjectDir)\bin\Debug\CloudAPISample.dll" "$(AppData)\Autodesk\REVIT\Addins\2022"
+xcopy /Y /F "$(ProjectDir)\bin\Debug\*.dll" "$(AppData)\Autodesk\REVIT\Addins\2022"
 
 xcopy /Y /F "$(ProjectDir)Resources\icon.ico" "$(AppData)\Autodesk\REVIT\Addins\2022"
 

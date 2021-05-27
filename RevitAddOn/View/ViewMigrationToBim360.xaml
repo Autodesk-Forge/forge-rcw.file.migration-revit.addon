@@ -61,7 +61,7 @@
                     <TextBox Grid.Column="0" Name="tbLocalFolder" Margin="5" Height="Auto" />
                     <Button Grid.Column="1" Click="OnBtnBrowseDirectory_Click" Margin="5,5,10,5" Width="60" HorizontalAlignment="Left">...</Button>
                 </Grid>
-                <Button Click="OnBtnDownload_Click" Margin="5">Start Downloading from BIM 360 Team</Button>
+                <Button Name="btnDownloadFolder" Click="OnBtnDownload_Click" Margin="5">Start Downloading from BIM 360 Team</Button>
                 <TextBlock Margin="10" TextWrapping="Wrap" FontStyle="Italic" ><Run Text="- You can either download models from BIM 360 Team use this tool, or download models manually from UI"/></TextBlock>
             </StackPanel>
             <StackPanel Margin="10" Grid.Column="1">
