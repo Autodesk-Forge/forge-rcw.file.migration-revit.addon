@@ -13,11 +13,11 @@
 
 
 # Description
-The Revit addon Sample is based on the the project from SDK sample(Samples\CloudAPISample\CS), it intends for demonstrating usage of Revit Cloud API. In this sample, we provided the workflow to demostrate migrating Revit RCW model from `BIM 360 Team` to `BIM 360 Docs`.
+This Revit addon sample is based on the project from Revit 2022 SDK sample (\<SDK install\>\Samples\CloudAPISample\), it is intended for demonstrating the usage of Revit Cloud API. This sample demonstrates the workflow of  migrating a Revit RCW model from `BIM 360 Team` to `BIM 360 Docs`.
 
-The sample addon includes the features as follow:
+The sample addon includes the following features:
 1. Access all the contents within BIM 360 Team and Docs by logging with Autodesk Account.
-2. Download the Revit models to specified local folder from BIM 360 Team.
+2. Download the Revit models from `BIM 360 Team` to specified local folder from BIM 360 Team.
 3. Selected the targeted folder by navigating from BIM 360 Docs, and upload the Revit models from local folder to the targeted folder on BIM 360 Docs.
 4. Reload the links to the correct model in the cloud.
 
@@ -34,21 +34,20 @@ The sample addon includes the features as follow:
 - Revit API knowledge.
 
 
-# Security considerations
-This version does not implement any security measures to protect your Forge keys, it uses the user environment variables to save your Forge keys, this may not be safe enough when delivering the application to your customer(s).
+# Disclaimer: Security considerations
+    To focus on demonstrating the new Revit API feature, this sample uses the user environment variables to save your Forge keys to simplify the authentication process. This is enough to understand the sample and use for your own. 
 
-If you are interrested to learn few technics to help on protecting your application and your Forge keys, please refer to
-the 'secure-dev' branch at https://github.com/Autodesk-Forge/forge.wpf.csharp when you consider to deliver your application to a customer. The sample here is present and 'unsecure' to keep the code simple and ease of read to learn the Revit and Forge API.
+    However, the developer should be aware that this approach does not show the best practice when delivering the application to your customers. Please refer to the 'secure-dev' branch of  https://github.com/Autodesk-Forge/forge.wpf.csharp as an example of more secure version of authentication implementation when delivering your application to a customer. 
 
 
 # Running locally
-- For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use http://localhost:3000/api/forge/callback/oauth as Callback URL. Finally take note of the Client ID and Client Secret. 
+- For using this sample, you need an Autodesk Forge developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use http://localhost:3000/api/forge/callback/oauth as Callback URL. Finally take note of the Client ID and Client Secret. 
 
 - Connect your Forge App to a Specific BIM 360 Account, follow the [tutorial](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/get-access-to-account/)
 
 - Download the repository, open `RevitCloudSample.sln` Solution on Visual Studio. The build process should download the required packages (**Autodesk.Forge** and dependencies). Compile and build the project.
 
-- Setup the environment variables of your Forge App key following the steps, please DO keep the key under your user environment, not expose to others, we are still evaluating the best practice to keep the Forge App Keys.
+- Setup the environment variables of your Forge App key following the steps. (Please make sure you keep the keys secure.  Do not share with others, nor expose publicly.)
     1. From the desktop, right-click the very bottom-left corner of the screen to get the Power User Task Menu.
     2. Click System from the Power User Task Menu that’s displayed on the screen.
     3. Under the System menu, you need to click the Advanced System Settings.
@@ -83,7 +82,7 @@ netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\us
 
 
 # Tips & Tricks
-- If you run the application, and meet the exception of assembly `Autodesk.Forge` can not be loaded, you can solve this by copying the assembly(together with dependencies) to the roaming folder of your Revit plugin.
+- If you run the application, and meet the exception of assembly `Autodesk.Forge` cannot be loaded, you can solve this by copying the assembly (together with dependencies) to the roaming folder of your Revit plugin.
 
 - Before running the plugin, since we need to communicate with 3 legged token callback over HTTP and HTTPS. At a minimum, you want to configure a URL registration and add a Firewall exception for the URL your service will be using. You can configure these settings with the Netsh.exe tool as follow. 
 ```powershell
@@ -92,13 +91,13 @@ netsh http add urlacl url=http://+:3000/api/forge/callback/oauth/ user=DOMAIN\us
 Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/configuring-http-and-https?redirectedfrom=MSDN) for details.
 
 # Limitation & Known issue
-- Currently,  the tool support downing Revit models from BIM 360 Team, you can specify a folder, and all the files under the folder will be downloaded. But there is no sign to notify when all the files are downloaded, please check the local folder to make sure all the files are fully downloaded before uploading to BIM 360 Docs.   
+- Currently,  the tool support downloading Revit models from BIM 360 Team. You can specify a folder, and all the files under the folder will be downloaded. But there is no sign to notification when all the files are downloaded. Please check the local folder to make sure all the files are fully downloaded before uploading to BIM 360 Docs.   
 
-- After logging with user account, the app will iterate all the projects and folders from BIM 360 Team and Docs, you will see the projects|folders show up gradually, be a little patient if you don't see the folder that you are interested in.
+- After logging with user account, the app will iterate all the projects and folders from BIM 360 Team and Docs, you will see the projects and folders show up gradually. Be patient if you don't see the folder that you are interested in.
 
-- The 3 legged token will be expired in 30 minutes, the refresh token is not kept and made to refresh the access token automatically, you need to login again if the token is expired, feel free to improve this feature.
+- The 3 legged token will be expired in 30 minutes. The refresh token is not kept and made to refresh the access token automatically. You need to login again if the token is expired. Feel free to improve this feature.
 
-- Please DO keep the Forge App key under your user environment variable, not expose to others. We are still evaluating the best practice to keep the Forge App Keys, may change the way if any better solution.
+- Please DO keep the Forge App key under your user environment variable. Not expose to others.
 
 # License
 - This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE.md) file for full details.
@@ -106,4 +105,4 @@ Please refer [Configuring HTTP and HTTPS](https://docs.microsoft.com/en-us/dotne
 
 # Written by
 - Zhong Wu [@johnonsoftware](https://twitter.com/johnonsoftware), [Forge Partner Development](http://forge.autodesk.com)
-- Based on the original sample `CloudAPISample` under Revit SDK by Will Gu, Software Developer, Autodesk.
+- Based on the original sample `CloudAPISample` under Revit SDK 2022 by Will Gu, Software Developer, Autodesk.
