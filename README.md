@@ -35,9 +35,9 @@ The sample addon includes the following features:
 
 
 # Disclaimer: Security considerations
-    To focus on demonstrating the new Revit API feature, this sample uses the user environment variables to save your Forge keys to simplify the authentication process. This is enough to understand the sample and use for your own. 
+- To focus on demonstrating the new Revit API feature, this sample uses the user environment variables to save your Forge keys to simplify the authentication process. This is enough to understand the sample and use for your own. 
 
-    However, the developer should be aware that this approach does not show the best practice when delivering the application to your customers. Please refer to the 'secure-dev' branch of  https://github.com/Autodesk-Forge/forge.wpf.csharp as an example of more secure version of authentication implementation when delivering your application to a customer. 
+- However, the developer should be aware that this approach does not show the best practice when delivering the application to your customers. Please refer to the 'secure-dev' branch of  https://github.com/Autodesk-Forge/forge.wpf.csharp as an example of more secure version of authentication implementation when delivering your application to a customer. 
 
 
 # Running locally
