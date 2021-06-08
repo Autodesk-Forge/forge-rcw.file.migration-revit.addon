@@ -73,6 +73,9 @@ namespace Revit.SDK.Samples.CloudAPISample.CS.Forge
             catch (Exception e )
             {
                 Console.Write(e);
+                _httpListener?.Stop();
+                _httpListener?.Close();
+                _httpListener = null;
             }
         }
 
